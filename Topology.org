@@ -1,0 +1,705 @@
+#+TITLE: Topology and Linear Analysis
+#+AUTHOR: Parth Shimpi
+#+STARTUP: indent latexpreview 
+#+LATEX_HEADER: \usepackage{mathtools}
+
+* Metric Spaces
+
+** Motivation 
+
+TODO talk more about this. 
+
+DEFINITION A metric space is a pair \( (M,d) \) where \( d:M\times M \rightarrow \mathbb{R} \) obeys
+     1. Positive definiteness: \( \forall x,y\in M,\; d(x,y)\geq 0\), with equality iff \( x=y.\)
+            This gives our structure the ability to tell distinct points apart. If two points were at distance $0$ from each other, then transitizvity of closeness (see Triangle Inequality) would ensure that they share the same metric properties, i.e. $d$ cannot tell them apart. Then they better be the same!
+
+     2. Symmetry: \( \forall x,y \in M, \quad d(x,y)=d(y,x).\)
+            Closeness is symmetric, isn't it?
+
+     3. Triangle Inequality: \( \forall x,y, z \in M, \quad d(x,y)+d(y,z)\geq d(x,z) \).
+            Formalizes the idea that closeness is transitive.
+
+            Makes most sense when looking at sequences: if \(x_n\) and \( z_n \) both get arbitrarily close to \(y_n\), they must also get arbitrarily close to each other.
+
+** New Metrics from Old
+
+As is a standard exercise in mathematics, after defining an object we formulate ways of generating more instances from existing ones. The fact that we do this so often has, in fact, led us to abstract out these processes and we succintly write them as /universal properties/. While we shall not use these for metric spaces, it is still worth noting that all the constructions below are essentially adopted from the category of metric spaces. (Fun fact: there are multiple ways to turn the class of metric spaces into a category! Do the constructions below remain the same in each case?)
+
+*** Metric Subspaces
+
+If \(N\subset M\) and \(d\) is a metric on \(M\) then the restriction \(d|_{N\times N}\) is a naturally induced metric on the subset.
+
+*** Product Spaces
+
+If \((M,d)\) and \((N,d')\) are metric spaces then there are in fact multiple ways to induce a metric on \(M\times N\). If \( a=(m_1,n_1), b=(m_2,n_2)\in M\times N \), then the following are all valid metrics that respect the universal property of products:
+
+\begin{align*}
+d_1(a,b) &= d(m_1,m_2)+d'(n_1,n_2) \\
+d_2(a,b) &= [(d(m_1,m_2))^2+(d'(n_1,n_2))^2]^{1/2} \\
+d_\infty (a,b) &= \max \{d(m_1,m_2),d'(n_1,n_2)\}
+\end{align*}
+
+This might seem annoying- which is the canonical product metric? Turns out all three are equivalent: \(\\ d_\infty \leq d_2 \leq d_1 \leq 2d_\infty \), so what's close in one metric remains close in the other.
+
+Write \(M\oplus_p N\) for \((M\times N , d_p)\) where \(p\) can be \(1 , 2 \) or \(\infty\).
+
+** Metrics are all about Sequences
+
+Studying a single point in isolation does not tell much about what is happening. Studying /sequences of points/ though, leads to a rich theory. Sequences are in some sense, the prime objects of study in a metric space.
+
+It may be nice to think about sequences as records of /motion/, the sequence \(x_n\) describing the motion of a point \(X\) in a discrete-time setting. This gives nice intuition for concepts like continuity, which then becomes a description of how the image \(f(X)\) of the point mirrors the motion of \(X\). 
+
+Sequences are also the only tool that let us talk about the arbitrarily large and small, since the best way to rigorise /infinity/ would be to call it /the place where a point moving further and further away would eventually reach./ In fact, this is essentially the idea behind Abraham Robinson's theory of the /hyperreal numbers/, which he describes as equivalence classes of real sequences similar to how Cauchy defined the reals. Then the hyperreal corresponding to the sequence \(1,2,3,...\) is in fact an infinite hyperreal.
+
+DEFINITION We say a sequence \((x_n)\) /converges to/ \(p \in M\) if the points get trapped arbitrarily close to \(p\). More formally, \(\forall \epsilon >0 \;\; \exists N, \quad n>N \Rightarrow d(x_n,p)<\epsilon \).
+
+    A sequence is /convergent/ if it converges to some \( p\in M \).
+
+    NOTE Convergence is always relative to the parent space: convergence is a property of
+    the metric.
+
+The above definition needs a sequence \((x_n)\) as well as a potential candidate \(p\) for the limit. But consider the metric subspace \(M\setminus\{p\} \). Now \((x_n)\) has been classified as a non-convergent sequence here, but nothing really is /lost/ about the original sequence since \(p\) wasn't in it to begin with. There must thus be some underlying property of the sequence that does not depend on the ambient space, this motivates the next definition.
+
+DEFINITION A sequence \(x_n\) is /Cauchy/ if the points eventually get arbitrarily close to each other. More formally, \( \forall \epsilon>0 \; \exists N, \quad m,n >N \Rightarrow d(x_m,x_n)<\epsilon.\)
+
+    NOTE Depends only on the notion of distance- the ambient space is irrelevant!
+
+Convergent sequences are always Cauchy. But Cauchy sequences that aren't convergent suggest that the ambient space has 'holes' or missing points- there should have been a point that the sequence converges to, the space is /incomplete/.
+
+DEFINITION A metric space \(M\) is /complete/ if every Cauchy sequence is Convergent.
+
+    NOTE This is a global property of metric spaces.
+
+    Every metric space can be /completed/ by adding points to fill the 'holes' - a non-trivial result, but true nonetheless. This lets us define \(\mathbb{R}\) as the metric completion of \(\mathbb{Q}\).
+
+We care a lot about convergence, since it carries most of the 'closeness' data we need. Naturally, subsets that inherit this property are special:
+
+DEFINITION A subspace \(V\subset M\) is /closed/ if any sequence in \(V\) is convergent if and only if it is convergent as a sequence in \(M\). In other words, a closed subset contains its /limit
+points/.
+
+    Accordingly, given any subset \(A \subset M\), we can define its /closure/ \(\bar{A}\) by adding enough points to make it closed, i.e. taking the smallest closed set containing \(A\). Then somewhat trivially, a set is closed iff it equals its closure.
+
+    LEMMA A subset of a complete space is complete iff it is closed.
+
+    LEMMA Products of complete metric spaces are complete.
+
+DEFINITION A subspace \(U\subset M\) is /open/ if \( M\setminus U \) is closed.
+
+    LEMMA A set \(U\subset M\) is open /iff/ for every \( p\in U, \; \exists \epsilon>0 \) such that \(B_\epsilon (p)\subset U\).
+
+        SKETCH Suppose a set is open but for for every \(\epsilon>0\), there is some point in \(U \setminus B_\epsilon(p)\). Then we can construct a sequence in \(M \setminus U\) that converges to \( p \notin M \setminus U \), but the set was closed.
+
+    The alternate characterization is way more useful, so this will become the primary definition henceforth!
+
+    NOTE In either characterization, being open depends on the ambient space. While very clear in the first one, it is a bit more subtle in the latter- for any point \(p\), \(B_\epsilon(p)\) depends on the the entire space.
+
+    EXAMPLE a single point in a discrete space is open: since every other point is at a distance \(1\), we have \({B_{1/2}(p)=\{p\}}\)
+
+The alternate characterization of openness captures the idea that no point in an open set is on the /boundary/, that every point is in the /interior/. These are concepts that we will formalise next: 
+                                                                    
+DEFINITION A /neighbourhood/ of a point is an open set that it is contained in.
+
+    Intuitively, the more neighbourhoods two points share, the closer they are. Then two metrics are equivalent if they induce the same neighbourhoods, since all relevant closeness information is contained in there.
+    
+    Open sets are /dual/ to closed sets, since knowing one gives the other for free. The choice between which one you use comes down to choosing what is a better carrier of information- the sequences or neighbourhoods. While sequences are the natural choice in metric spaces, the notion of convergence becomes meaningless in more abstract topological spaces and relies on neighbourhoods in any case. Then open sets are the way to go.
+
+DEFINITION For any subset \(A\subset M\), we define the /interior/ \( A^o \) to be the union of all neighbourhoods contained in \(A\), i.e. the largest open set contained in \(A\).
+
+    Then somewhat trivially, a set is open iff it is equal to its interior.
+
+    NOTE The interior of a subset depends on the ambient space.
+
+DEFINITION The /boundary/ of a set \(A\subset M\) is defined as \( \partial A=\bar{A}\setminus A^o\).
+    
+    Thus a closed set contains its boundary while an open set does not; and the complement of an open set is closed since the two share a boundary.
+
+DEFINITION A set is /clopen/ if it is both closed and open.
+
+    This sounds weird at first, but the ideas of closed and open sets are not opposites- the notions just have to do with whether or not the set contains its boundary. Clopen sets, then, satisfy both the criteria i.e. they have /no boundary!/: \(A\) is clopen iff \(\partial A = \emptyset.\) 
+
+** Maps that we care about
+
+A metric space is a set adorned with a structure about closeness, and quite naturally the only maps that make sense to talk about are those preserving this notion. In particular, we saw how well sequences capture the important properties of the metric, so the following definition seems natural:
+
+DEFINITION A function \(f:(M,d)\rightarrow (N,d')\) is /continuous/ at \({p\in M}\) if any sequence converging to \(p\)
+maps to a sequence converging to \(f(p)\).
+
+    This is a /local/ property that only cares about what happens to a small neighbourhood of \(p\).
+
+    Talking in terms of neighbourhoods, this means that \(d(x,p)\) shrinks in correlation with
+    \(d'(f(x),f(p))\). In other words, images of \(D_\delta(p)\) get arbitrarily small around \(f(p)\), so can eventually be 'trapped' within \( D_\epsilon(f(p)) \) for arbitrarily small \({\epsilon.}\) This an equivalent characterization of continuity at \(p\):
+
+    \( f:(M,d)\rightarrow (N,d') \) is continuous at \(p\) iff \(\forall \epsilon >0, \; \exists \delta >0 \) such that \( f[D_\delta (p)] \subset D_\epsilon (f(p))\).
+
+    LEMMA Set of all functions continuous at a point is closed under addition, multiplication, composition and (non-zero) division.
+
+DEFINITION A function \(f:(M,d)\rightarrow (N,d')\) is (pointwise) /continuous/ if it is continuous everywhere in \(M\).
+
+    Continuous functions preserve /all/ convergent sequences. This says if \(f\) is continuous, I can approximate \(f(p)\) for every \( p \) by checking its values at nearby points- for instance, a continuous function is completely determined by its action on a /dense/ subset (eg. knowing the values a continuous function takes on \(\mathbb{Q}\) is enough to determine the function uniquely on \(\mathbb{R}\)!)
+
+    Then if a set is not closed (contains some sequence \(x_n\) but not its limit \(x_0\)), the image of this set in a continuous map cannot be closed (contains \(f(x_n)\) but not its limit \(f(x_0)\)). The
+    converse can be proved as an exercise, and we get the equivalent characterization of continuity:
+
+    A function between metric spaces is /continuous/ if the pre-images of closed sets are closed. This can be readily re-stated in terms of open sets, and so we have a characterisation of continuity in terms of neighbourhoods.
+
+    \begin{align*}
+    &\{\text{open} \} \rightarrow \{\text{open, neither open nor closed}\}\\ 
+    &\{\text{closed}\} \rightarrow \{\text{closed, neither open nor closed}\} 
+    \end{align*}
+
+    Continuous functions are deformations /without any ripping/, i.e. whatever is close stays close. Gluing however is allowed since we said nothing about adding more structure.
+
+DEFINITION A continuous bijection with a continuous inverse is a /homeomorphism/. 
+
+    Homeomorphisms are deformations /without any ripping or gluing/ (since the two are inverse operations and we want the transformation to be continuous both ways).
+
+Homeomorphism is the notion of isomorphism in the category of metric spaces where the morphisms are continuous maps. Since the only way we have to access structure is through these morphisms, we have to treat homeomorphic spaces like they're same, and study structures up to isomorphism classes. But continuous functions forget mostly everything about the metric, and only care about 'relative closeness'- This means they preserve only a handful of properties (precisely the /topological properties/) and lose most of information carried by the metric. Since we have more to play with, we can in fact define stronger maps that can distinguish between homeomorphic metric spaces. 
+
+    For example, \((0,1) \cong \mathbb{R}\) but these clearly are very different metric spaces- one of them is bounded for starters. This happens because continuous functions only care about /soft/ properties such as convergence, but /hard/ analytical properties like the /rate of convergence/ of sequences at different points can differ wildly.
+
+    One constraint we can have is to use the metric to put a lower bound on how fast the sequences converge everywhere, i.e. to say "approximations can't be worse than this". This is discussed further in the next section, giving the notion of /uniform continuity./
+
+    Uniform continuity is somewhat a cheap getaway- it still isnt addressing the problem that distances aren't preserved at a bounded rate, it just says that the regions where this happens are small enough to be ignored. Here are some [[https://www.desmos.com/calculator/ujayxtheqj]['bad' uniformly continuous functions.]] (In particular, observe behaviour at the origin.)
+
+DEFINITION For \(\lambda>0,\) function \( f:(M,d)\rightarrow (N,d') \) between metric spaces is /\(\lambda\)-Lipschitz/ if \({\forall x,y\in M,}\) \( {d(x,y)\leq \lambda d'(f(x),f(y))}\).
+
+    A map is /Lipschitz/ if it is \(\lambda\)-Lipschitz for /some/ \(\lambda\). This is strictly stronger than uniform continuity.
+
+    LEMMA A differentiable function is Lipschitz iff it has /bounded derivative./
+
+    A Lipschitz map with a Lipschitz inverse is a /Lipschitz equivalence./ This is the standard notion for equivalence of metrics, and is stronger than homeomorphism.
+ 
+        When speaking of two norms on a space \(X\), we say \( ||\cdot || \) and \(|| \cdot ||'\) are equivalent norms if there are constants \(\lambda, \mu\) such that \(\mu ||x|| \leq ||x||' \leq \lambda ||x||\) for all \(x \in X\). This is the same as saying the identity map is a Lipschitz equivalence between \((X,d(x,y)=||x-y||) \) and \((X, d'(x,y)= ||x-y||')\). 
+
+    DEFINITION A \(\lambda\)-Lipschitz map for \(0<\lambda<1\) is called a /contraction map/. These are especially nice, and 'shrink' your space.
+
+        THEOREM *(Contraction Mapping)* If \(M\) is a non-empty complete metric space and \(f:M\rightarrow M\) is a contraction map then \(f\) has a unique fixed point.
+
+        NOTE - Need \(\lambda<1\), otherwise isometries (which are 1-Lipschitz) are a counterexample.
+             - Need completeness for your fixed point to actually exist, consider \(x \mapsto \frac{x}{2}\) on \(\mathbb{R}\setminus \{0\}\).
+
+        SKETCH \(M\) non-empty so have a point \(x\in M\), and generate a sequence \(x,f(x),f^2(x),...\). This turns out to be Cauchy (use triangle inequality and geometric sequences) so converges to \(z\), which must be a fixed point of \(f\).
+
+To get notions stronger than Lipschitz, we can use vector-space structure to classify /continuously differentiable functions./
+
+And of course, the strongest notion of them all: a map \({f:(M,d)\rightarrow (N,d')}\) between metric spaces is an /isometry/ if \(\forall x,y\in M , \quad d(x,y)=d'(f(x),f(y)).\)
+
+    An isometry is de facto injective, so is simply an embedding of \(M\) in \(N\). This is as good as saying \(M\) is a subspace.
+
+** Uniformity
+
+*** Pointwise and Uniform 
+
+When talking about convergence globally, what we really do is look at the time-evolution of a /family/ of objects \(O_i(x)\) where \(i\in I\) is an indexing (time) variable in an ordered sets (\(\mathbb{N}\) or \(\mathbb{R}\)), and \(x\) is in some metric space.
+
+    The family is over \(x\), not \(i\). The /global/ part corresponds to this.
+
+    EXAMPLE A sequence of functions on a metric space \(f_{n}(x)\) where \(n\in \mathbb{N}\), \(x\in M\) can be thought of as the time evolution of a single function.
+
+        The fact that we index functions over \(\mathbb{N}\) is somewhat arbitrary and it makes perfect sense to index them over some subset of \(\mathbb{R}\) to get the notion of 'path between functions', see homotopy.
+
+    EXAMPLE When talking of open balls in a metric space \(B_\delta(x)\) where \( \delta \in \mathbb{R}_{>0} \), \(x\in M\), it is helpful to think of a /single/ ball of shrinking radius, letting us talk of arbitrarily small balls.
+ 
+    TODO Find more examples
+
+We say \(O_i(x)\) converges /pointwise/ to \(0\) if \( \forall x, \; \forall \epsilon \) the \(O_i(x)\) eventually get smaller than \(\epsilon\).
+
+    This is a local property: you set your eyes on a particular \( x_0 \), observe only the family \(O_i(x_0)\) and see that it converges, and then move to some other \(x_1\) and repeat.
+
+    The fact that \(i\) is in an /ordered set/ lets us talk about /'eventually'/: we say the family gets arbitrarily small at \(x \) if given any \(\epsilon>0\) we can find an \(i_0(x,\epsilon)\) such that \(O_i(x)\) is smaller than \(\epsilon\) whenever \( {i>i_0(x,\epsilon)} \). Intuitively, this means after a certain time has passed there's no going back to bigger sizes.
+
+    EXAMPLE A sequence of functions \(f_n(x)\) converges pointwise to \(0\) if at every \(x\), \(|f_n(x)|\) gets arbitrarily small eventually. Pointwise convergence to a non-zero function \(f\) can be rephrased as the family \(f_n -f\) converging pointwise to \(0\).
+
+    EXAMPLE The family \(B_\delta(x)\) of open balls trivially converges pointwise to zero. Observe however that given a function \(f\) between metric spaces, we get a new family \(f[B_\delta(x)]\). \(f\) is /pointwise continuous/ iff this family converges pointwise to zero.
+
+        Continuous functions are indeed about preserving 'sequences', in a stronger sense than before! A function is pointwise continuous if for families of open sets \(S_\delta(x)\), j  \[S_\delta(x)\rightarrow 0 \Rightarrow f[S_\delta(x)]\rightarrow 0. \]  
+
+    NOTE The natural way to bound a set by \(\epsilon\) is to say the set can be enclosed in an \(\epsilon\)-ball. These balls are in no way related to the family we are studying. The \(\epsilon\) in the definition is /not a fundamental object/, its just a way to quantify arbitrary smallness. The \(\delta \), on the other hand is, and this is why we said the \(\epsilon-\delta\) definition of continuity is a statement about the \(\delta \)s and not the \(\epsilon\)s.
+
+Pointwise convergence is very local- you can have some families \( O_i(x_0)\) already getting really small while some other family \( O_i(x_1) \) is very behind in the race. In other words, the /rate of convergence/ is different at every \(x\). We get a stronger notion of convergence if we can place a lower bound on all the rates. This idea of 'rate of convergence' is captured by studying \( i_0(x,\epsilon) \), a function that returns the smallest time afterwhich every \(O_i(x)\) is smaller than \(\epsilon\).
+
+We say the family \(O_i(x)\) converges /uniformly/ to \(0\) if \({i_0(\epsilon)=\sup_x [i_0(x,\epsilon)}]\) exists, i.e. there is a finite time after which every object has become \(\epsilon\)-small. Given \( \epsilon>0 \), for /every \(x\)/, \(O_i(x)\) is bound by j\(\epsilon\) whenever \(i>i_0(\epsilon)\).
+
+    This is a /global/ statement about the family, and is /strictly stronger/ than pointwise convergence.
+
+    This is a case of /quantifier reversal/: we go from \(\forall \epsilon \; \forall x \; \exists i_0\) to \(\forall \epsilon \; \exists i_0 \; \forall x\).
+
+    EXAMPLE DEFINITION A sequence of functions \(f_n(x)\) converges /uniformly/ to \(0\) if \(\forall \epsilon>0, \; \exists N\in \mathbb{N}\) such that \(\forall x,\; |f_n(x)|<\epsilon\) whenever \(n>N\).
+
+        Can study uniform convergence of \(f_n\) to a non-zero function \(f\) by studying the convergence of \(f_n-f\) to zero.
+
+    EXAMPLE DEFINITION A function \(f\) between metric spaces is /uniformly continuous/ if \(\forall \epsilon>0 \; \exists \delta>0\) such that \(\forall x, \) \({f[B_\delta(x)]\subseteq B_\epsilon(f(x))}\).
+
+        This is in fact a statement about /growth/ of the function- a function \(f\) is uniformly continuous if small changes in \(x\) lead to /bounded/ changes in \(f(x)\) (/cf/ continuity- small changes in \(x\) lead to /small/ changes in \(f(x)\).)
+
+*** The space of functions
+
+WARNING some concepts below have only been defined here in the context of a uniform metric which assumes all functions are bounded. However, the results and definitions are valid for unbounded functions too, by taking the equivalent epsilon-delta formulations. While the latter case is more general and appropriate, most examples we encounter are non-pathological so we choose to sacrifice generality for better intuition. 
+
+Pointwise properties treated sequences of functions \(f_i(x)\) as 'collections (over \(x\)) of sequences (over \(i\)) of points'. This mostly disregarded the global structure of the function, reducing \(x\) to just an elaborate indexing mechanism. However when transitioning to uniform, quantifier reversal took us from 'collections of sequences of points' to 'sequences of collections of points'. This lets us treat the 'collections of points' (functions) as objects in their own right.
+
+DEFINITION A function \(f:S\rightarrow M\) is bounded if \(f[S]\) is a bounded subspace of \(M\).
+
+For a non-empty set \(S\) and a metric space \((M,d)\), the space of all bounded functions \(S\rightarrow M\) is itself a metric space \(l_\infty (S,M)\), with the /uniform metric/ \({D(f,g)=\sup_{x\in S}d[f(x),g(x)]}\).
+
+    EXERCISE Show that this is a metric space!
+
+LEMMA a sequence of bounded functions \(f_n\) converges uniformly to \(f\) iff the sequence converges in the uniform metric.
+
+DEFINITION for a non-empty set \(S\) and a metric space \(M\), a sequence of functions \(f_n:M\rightarrow N\) is /uniformly Cauchy/ if the sequence \(f_n\) is Cauchy in \(l_\infty(S,M)\).
+    
+    EXERCISE Reformulate this in terms of \(\epsilon-\delta\) to extend the definition to unbounded functions. What would /pointwise Cauchy/ then correspond to?
+
+THEOREM *(General Principle of Uniform Convergence)* If \(S\) is a non-empty set and \(N\) is a complete metric space, then a sequence of functions \(S\rightarrow N\) is uniformly convergent iff it is uniformly Cauchy.
+
+    In other words, \(l_\infty(S,N)\) is complete if \(N\) is. Compare with General principle of convergence- \(R\) is complete, i.e. a real sequence is convergent iff it is Cauchy.
+
+    SKETCH Uniformly convergent \(\Rightarrow\) Uniformly Cauchy is trivial. To show the other way, use completeness of \(N\) to construct the limit: at each \(x\in S\), \(f_n(x)\) is a Cauchy sequence in \(N\), so has some limit \(f(x) \in \mathbb{N}\). Use the uniformity of Cauchiness to show the convergence \(f_n \rightarrow f\) is uniform.
+
+*** Uniformity is nice!
+
+THEOREM Uniform convergence preserves continuity, i.e. the uniform limit of a sequence of continuous functions is continuous.
+
+    For metric spaces \(M,N\), define \(C_b(M,N)\) to be the subset of (pointwise) continuous functions in \(l_\infty (M,N)\). Then for bounded functions, the result is equivalent to saying that \(C_b(M,N)\) is a closed subset of \(l_\infty(M,N)\).
+
+    NOTE Simple pointwise convergence is not enough- consider \(f_n: [0,1]\rightarrow \mathbb{R}\) given by \(f_n(x)=x^n\). These are all continuous but they converge to \(f(x) = \begin{cases} 0, & x\in [0,1) \\ 1, & x=1\end{cases}\)
+
+THEOREM Uniform convergence preserves Reimann integrability and integrals, i.e. if a sequence of integrable functions \(f_n\) converges uniformly to \(f\) on \([a,b]\), then \(f\) is integrable and \({\int_a^b f_n \rightarrow \int_a^b f}\).
+
+    This is the required condition to "swap" limits and integrals: ${ \int \lim_{n\rightarrow \infty} f_n = \lim_{n\rightarrow \infty} \int  f_n}$
+
+    This is the required condition to "swap" summations and integrals: ${\int \left( \sum_1^\infty g_k \right) = \sum_1^\infty \left( \int g_k \right)}$
+    
+    NOTE Simple pointwise convergence is not enough- consider the sequence \(f_n(x)=\begin{cases} 1, & x \text{ is a rational with at most } n \text{ decimal places.} \\ 0, & \text{otherwise}\end{cases}\). Each of these is Reimann integrable and integrates to zero, but the pointwise limit \(f(x)=\begin{cases} 1, & x\in \mathbb{Q} \\ 0, & x \in \mathbb{Q}^c \end{cases}\) is a well-known example of a non-integrable function.
+
+THEOREM (Generalization to non-integrable functions) If \((f_n)\) is a sequence of \(C^1\) functions such that \(f_n'\) converges uniformly on \([a,b]\) and \(f_n (c)\) converges for some \(c\in [a,b]\) then \(f_n\) converges uniformly to a \(C^1\) function \(f\), and \(f'=\lim f_n'\).
+
+    This gives term by term differentiation: \({\displaystyle \frac{d}{dx}\sum g_n = \sum \frac{d}{dx}g_n}\).
+
+    NOTE Need convergence at some \(c\) because for example the sequences \((g_n)\) and \((g_n+n)\) have the same family of derivatives, but the latter cannot converge.
+
+WARNING Uniform convergence does not preserve differentiability! On a deeper level, this is because integration is a smoothing operation, so a lot more functions are integrable than are differentiable.
+
+THEOREM Uniformly continuous functions preserve all Cauchy sequences, i.e. if \(f\) is uniformly continuous and \(x_n\) is a Cauchy sequence then so is \(f(x_n)\).
+
+    Compare with how continuous functions preserve all convergent sequences. This also shows uniform continuity is strictly stronger than continuity.
+
+    WARNING Converse not true: for example, all continuous functions on complete spaces preserve Cauchy sequences.
+
+    NOTE Continuous functions can map Cauchy sequences to non-Cauchy ones if the limit point is not in the domain. For example, \(f(x)=\frac{1}{x}\) on \((0,\infty)\) maps the Cauchy sequence \((\frac{1}{n})\) to \((n)\).
+    
+*** Testing for uniformity
+
+LEMMA Uniform convergence always implies pointwise convergence, and moreover the limits must be the same (and unique). Similarly, a uniformly continuous function must also be pointwise continuous.
+
+    This is a helpful fact because we know a lot more about sequences of points than sequences of other objects, so we can study pointwise convergence first and then check uniformity.
+
+THEOREM *(Weierstrass M-test)*: If \((f_n)\) is a sequence of scalar-valued functions on a set \(S\), and $\sum_1^\infty M_n$ is a convergent series such that \(\forall x \in S, \; \forall n \in \mathbb{N} \quad {M_n \geq |f_n(x)|,\) then $\sum_1^\infty f_n(x)$ converges uniformly on \(S\).
+
+    SKETCH Since the scalar fields are complete, using GPUC it suffices to show \(\sum_1^\infty f_i\) has uniformly Cauchy partial sums. Given \(\epsilon >0\), \(\sum_n^\infty M_n <\epsilon\) for sufficiently large \(n\). Then using triangle inequality, for every \(x\), \(|\sum_n^{n+N} f_i(x)| \leq \sum_n^{n+N} |f_i(x)| \leq \sum_n^\infty M_n \).
+
+    This is an analog of comparison test for sequences.
+
+THEOREM If $\sum_1^\infty a_n (z-a)^n$ is a complex power series with radius of convergence \(R\), then the series converges uniformly on \(D_r(a)\) for any $r\in (0,R )$
+
+    SKETCH TODO
+
+    Recall: \(R\) is the radius of convergence of $\sum a_n(z-a)^n$ if the series converges absolutely for any $z\in D_R(a)$, but diverges for all other \(z\).
+
+    NOTE Convergence is not necessarily uniform on \(D_R(a)\) since behaviour on boundary is unknown. Thus we have the slightly weaker result. (Consider $\sum z^n$ on \(D_1(0)\)). The power series, however, converges on any disc properly contained in \(D_R(a)\), so we say the convergence is /locally uniform/ on \(D_R(a)\).
+
+    \(f=\sum a_n (z-a)^n\) is then /holomorphic/ in any smaller disc, so all subsequent properties (continuity, differentiability and term-by-term derivative converging to \(f'\) in the same radius of convergence) follow.
+
+THEOREM A continuous function on a compact set must be uniformlycontinuous.
+
+    This is somewhat the reason we define compactness: read the next section! Property stated here only for completeness.
+
+NOTE Lipschitz is sometimes easier to check because of its straightforward characterization, and is strictly stronger than uniform continuity.
+
+** Small Metric Spaces 
+
+*** The right amount of 'small'
+
+A family \(O_i(x)\) converges pointwise but not uniformly when \(\sup_x i_0(x,\epsilon)\) does not exist, i.e. has no upper bound. Such pathological cases arise when things get /arbitrarily large/ or /arbitrarily small/, and the only tool we have to study these are sequences which by definition are infinite. Sequences with no limits are bad- 'small spaces', then, won't allow for such exceptions. But what is the right notion of 'smallness'?
+
+DEFINITION A metric space \((M,d)\) is /bounded/ if there is a constant \(D\) such that \(d(x,y)\leq D\) for all \(x,y\in M\).
+
+    Alternatively, for every \(x\in M\) there is an \(R\) such that \({M\subseteq B_R(x)}\). Quantifier reversal!
+
+    *Not small enough!* The discrete space on an infinite set is bounded- you can have infinitely-many well-separated points in a  bounded space, so this is not a good enough notion of 'smallness'.
+
+DEFINITION A metric space \((M,d)\) is /totally bounded/ if for any \(\epsilon>0\), we can cover \(M\) with finitely many \(\epsilon\)-balls.
+
+    LEMMA This is strictly stronger than boundedness (not obvious.)
+
+    This is actually a huge improvement over boundedness- if you have an infinite collection of points in a totally bounded space, they /must/ get arbitrarily close to each other. The next lemma formalises this: 
+
+    LEMMA Any sequence in a totally bounded space has a Cauchy subsequence. 
+
+        SKETCH Given a sequence \(x_n\) in a totally bounded space \(M\), choose a finite cover of \(M\) by \(1\)-balls. By pigeonhole principle, one of the balls contains an infinite subsequence. This ball is also a totally bounded metric space, so has a finite cover of \(\frac{1}{2}\)-balls, one of which has an infinite subsequence. Repeat, to get a Cauchy subsequence.
+
+    *Not small enough!* The open interval \((0,1)\) is totally bounded. This happens to again beat the point because the sequence \(\frac{1}{2},\frac{1}{3},\frac{1}{4},...\) is still 'infinite' in some sense. Clearer when you observe that the space is homeomorphic to \(\mathbb{R}\). The only pathological cases that arise are when the Cauchy subsequence doesn't have a limit- so in our quest for the right 'small', we next characterise the spaces where this does not happen.
+
+Worth pointing out that both of the above are properties that rely on the notion of distance for definition, and cannot be redefined only in terms of open sets. The next one, however, happens to miraculously generalize.
+
+DEFINITION A metric space is /compact/ if it is totally bounded and complete.
+
+    *Small enough!* This happens to exactly do the trick, but to see that it works we reformulate the definition in terms of words we like- open sets and sequences.
+
+    LEMMA *(Bolzano Weierstrass)* Every sequence in a compact metric space has a convergent subsequence.
+
+    DEFINITION A metric space \(M\) is /sequentially compact/ if every sequence \((x_n)_n\) in \(M\) has a convergent subsequence \({(x_{n_i})_i \rightarrow x \in M}\). 
+
+        NOTE Need \(M\) to be a metric space because convergence is meaningless otherwise.
+
+        Then we have just seen that every compact metric space is sequentially compact. In fact, the converse is true as well:
+
+        THEOREM A metric space is compact if and only if it is sequentially compact.
+
+            SKETCH (Seq Compact \(\Rightarrow\) Tot Bdd and Complete) if \(M\) is sequentially compact then every Cauchy sequence has a subsequence converging to \(x\in M\), but the sequence is Cauchy so itself must converge to \(x\). Thus \(M\) is complete. 
+            Given \(\epsilon >0\), if it were not possible to cover \(M\) by finitely many \(\epsilon\)-balls then if \(\{B_1,...,B_n\}\) is a set of \(\epsilon\)-balls, these don't cover \(M\) so we can pick \(x_{n+1}\in M\) such that \(x_{n+1}\notin B_i\) for \(i \leq n\). Let \(B_{n+1}=B_\epsilon(x_{n+1})\), then we have inductively constructed a sequence with no convergent subsequence.
+
+    We now characterise compactness in terms of open sets: 
+
+        LEMMA *(Lebesgue Number)* If \(M\) is a (sequentially) compact metric space with an open cover \(\{U_\alpha\}\) there is a \(\delta>0\) (called the /Lebesgue number/ of the cover) such that \(\forall x\in M\), \(B_\delta(x)\) is contained in some \(U_\alpha\).
+
+        SKETCH Else for every \(k\), there is an \(x_k\) such that \(B_{1/k}(x_k)\) is not contained in any \(U_\alpha\). Then we have a sequence \(x_k\) with a convergent subsequence \(x_{k_i}\rightarrow x\). Now \(x\in U_\beta\) for some \(\beta\), so \(B_{1/m}(x)\subset U_\beta\) for some \(m\). Since \(x_{k_i}\rightarrow x\), we have an \(N\) such that \(x_{k_i}\in B_{1/m}(x)\) whenever \(k_i >N\). But then for \(K>\max\{2m,N\}\), \(B_{1/K}(x_K) \subset B_{1/m}(x)\subset U_\beta\), a contradiction.
+
+    DEFINITION A metric space \(M\) is /topologically compact/ if for every family \(\{U_\alpha\}_{\alpha \in I}\) of open sets such that \(\displaystyle \bigcup U_\alpha = M \), we have a finite subset \(\{U_{\alpha_1},...,U_{\alpha_n}\}\) such that \(\displaystyle \bigcup_{i=1}^n U_{\alpha_i} = M.\)
+
+        /Every open cover has a finite subcover./
+
+        THEOREM A metric space is topologically compact iff it is (sequentially) compact.
+
+            SKETCH (Seq Compact \(\Rightarrow\) Top Compact) if we have an open cover \(\{U_\alpha\}\) of \(M\), this has a Lebesgue number \(\delta\). By total boundedness, finitely many \(\delta\)-balls cover \(M\), and each \(\delta\)-ball is contained in some \(U_\alpha\) giving us a finite subcover.
+
+                NOTE You have to use sequential compactness twice, once to get the Lebesgue number and the second time to get total boundedness.
+
+            SKETCH (Top Compact \(\Rightarrow\) Seq Compact) If we have a sequence with no convergent subsequence, then for every \(x\in M\), /some/ open ball \(B_x\) around it contains only finitely many terms of the sequence. (Else we get a subsequence converging to that \(x\).) These form an open cover, so have a finite subcover \(\{B_{x_1},...,B_{x_n}\}\). But this contains only finitely many points of the sequence, so cannot be a subcover.
+
+    Compactness generalizes the concept of "finiteness". 
+
+    We have three equivalent formulations in a metric space, so use them efficiently!
+
+*** Examples of Compact Spaces 
+
+LEMMA Finite sets are compact.
+
+LEMMA Closed subsets of (topologically) compact spaces are compact. 
+
+    SKETCH Suppose \(C\) is compact and \(S\subset C\) is closed. Then given any open cover \(\{U_\alpha\}\) of \(C\), \(\{U_\alpha\} \cup \{C \setminus S\}\) is an open cover of \(C\). This has a finite subcover \(\{U_1, U_2, ... , U_n\} \cup \{C \setminus S\}\) since \(C\) is compact, but then \(\{U_1, U_2, ..., U_n\}\) is a subcover of \(S\). 
+
+LEMMA Continuous functions map compact sets to compact sets. 
+
+    SKETCH Suppose \(M\) is compact and \(f:M\rightarrow N\) is a continuous surjection. Then given an open cover \(\{U_\alpha\}\) of \(N\), \(\{f^{-1}(U_\alpha)\}\) is an open cover of \(M\) so have a finite subcover \(\{f^{-1}(U_1), f^{-1}(U_2), ..., f^{-1}(U_n)\}\). Then \(\{U_1,U_2,...,U_n\}\) is a finite subcover of \(N\).
+
+LEMMA Product of two compact metric spaces is compact. 
+
+    SKETCH Since all metrics on the product space are equivalent, we only show \(M \oplus_\infty N\) is compact if \(M\) and \(N\) are. Suppose \((m_1,n_1), (m_2,n_2), ...\) is a sequence in \(M \oplus_\infty N\). Then \(m_1,m_2,...\) has a subsequence \(m_{i_1}, m_{i_2}, ...\) converging to \(m \in M\) and then \(n_{i_1}, n_{i_2}, ...\) has a subsequence \(n_{j_1}, n_{j_2}, ...\) converging to \(n \in N\). Then \((m_{j_1},n_{j_1}), (m_{j_2}, n_{j_2}), ...\) is a subsequence of the original sequence that converges to \((m,n) \in M\oplus_\infty N\).
+
+    NOTE This in fact generalises to arbitrary products of general topological spaces, see Tychonoff's theorem. 
+
+THEOREM The closed interval \([0,1]\) is compact.
+      
+    SKETCH Easy to do by showing it is totally bounded. We instead show an elegant proof using /real induction:/ Suppose \(\{U_\alpha\}\) is an open cover of \([0,1]\). Let \(S\) be the set of all \(s\in [0,1]\) such that \([0,s]\) can be covered by finitely many \(U_\alpha\). Clearly \(0 \in S\) so \(S\) is non-empty bounded, hence has a supremum \(x\). 
+    This supremum must in-fact be a maximum: \(x\in U_\beta\) for some \(\beta\), and by openness \((x-\epsilon, x]\subset U_\beta\) for some \(\epsilon\). Then \([0, x-\epsilon]\) has a finite subcover \(\{U_1,U_2,...,U_n\}\), and hence \(\{U_1,...,U_n, U_\beta\}\) is a finite subcover of \([0,x]\). 
+    Now suppose \(x<1\). Then \(x \in U_\beta\) so \([x,x+\delta) \subset U_\beta\) for some \(\delta\). Then \(x+\delta \in S\), contradicting \(x = \sup S\). 
+
+THEOREM *(Heine Borel Theorem)*: A subset of \( \mathbb{R}^n \) is compact iff it is closed and bounded.
+
+    NOTE This is what people mean when they say "compactness" is a generalization of "closed and bounded".
+
+    SKETCH If \(S\subset \mathbb{R}^n\) is (sequentially) compact, then it is (totally) bounded and complete hence closed. Conversely, suppose \(S\subset \mathbb{R}^n\) is closed and bounded. Since \(S\) is bounded, it can be contained in \([-a,a]^n\) for some \(a\). Since the interval \([-a,a]\) is compact, the finite product \([-a,a]^n\) is compact too. \(S\) is then a closed subset of a compact set hence is compact.
+
+** Forgetting the Metric
+
+*** Metrics have a bunch of problems
+
+They depend on the existence of \(\mathbb{R}\).
+
+Aesthetic reasons- the subspace metric on \(S^1 \subset \mathbb{R}^2\) measures distances along chords instead of arcs (though both contain the same information). This is a bit annoying.
+
+They have /too much information/: all three metrics on the product space appear superficially different, but actually contain the same closeness information. More simply, any metric upon rescaling looks different but the information stays the same. Then the next step in abstraction is to consider metrics /upto equivalence/. 
+
+    Recall: two metrics are considered equivalent if they induce the same neighbourhoods on the underlying set. 
+
+*** Neighbourhoods contain all the structure
+
+Throughout this discussion, we gave three equivalent definitions wherever possible:
+
+- *Sequence-limit formulation:* All intuition we have of metric spaces comes from sequences, so
+it is most natural to phrase properties in those terms.
+
+- *Epsilon-delta formulation* Analysis, however, is easier with \(\epsilon\)s and \(\delta\)s. In particular, this lets you use the actual metric information way more than sequences.
+
+- *Open-set formulation* Lastly, wherever possible, we redefined things in terms of the most abstract closeness information available, the open and closed sets.
+
+If all the necessary information was contained in the neighbourhoods, so what if we artificially defined the neighbourhoods instead, with no metric information? This generates what are called /topological spaces/, which are far more general than metric spaces. Open sets form the language of topology. Properties that can be encoded only using open sets are called /topological properties/, and readily extend from metric spaces to general topological spaces.
+
+    Some of the topological properties we encountered were open-ness and closed-ness itself (somewhat trivial), compactness, and continuity of functions. Continuous maps happen to be the maps that always preserve these properties, and as we will see soon, are the most natural functions between topological spaces.
+
+    Contrast this with some of the properties enjoyed exclusively by metric spaces: (total) boundedness, completeness, and Lipschitz maps. All these use more information than is contained in the topology, and continuous maps are blind to these.
+
+*** What do we lose?
+
+- The ability to /quantify/, i.e. we cannot do any hard analysis.
+
+- Almost everything that has to do with sequences.
+
+    This is sad, because sequences were our most powerful tool to deal with metric spaces. We could /attempt/ to define convergence in terms of open sets but it isnt as powerful, so we don't try.
+
+* Semidecidability 
+* Topological Spaces
+
+As an entirely non-rigorous motivating argument, consider the properties you would want closeness to have: it should be reflexive (I am close to myself duh), symmetric, and transitive. This is screaming out equivalence classes (though not exactly), so what if we artificially define the sets of points close to each other, obeying certain rules?
+
+/Please ignore the above paragraph./
+
+** The Topology of Open sets 
+
+DEFINITION For a set \(X\), a pair \((X, \tau_X)\) is a /topological space/ if \(\tau_X \subset 2^X\) (called the /topology of open sets on \(X\)) satisfies:
+
+    -  \(\{\emptyset, X\}\subset \tau_X\)
+
+    - \(U,V \in \tau_X \Rightarrow U\cap V \in \tau_X\)
+
+        In other words, a topology of open sets is closed under /finite/ intersection. This captures transitivity of closeness: intersection of two neighbourhoods would be expected to be a neighbourhood. 
+
+        This also reflects that it is not possible to /create/ a boundary by taking finite unions, but arbitrary unions can create one.
+
+    - \(\{U_i\}_{i\in I} \subset \tau_X \Rightarrow \bigcup_{i\in I}U_i \in \tau_X\)
+
+        In other words, a topology of open sets is closed under /arbitrary/ union.
+
+DEFINITION The elements of \(\tau_X\) are called /open subsets/ of \(X\). /Closed subsets/ are defined to be
+complements of open subsets in \(X\).
+
+    For \(x\in X\), an open set containing \(x\) is called a /neighbourhood of \(x\)/.
+
+    NOTE Some people define neighbourhoods as /any/ set containing an open set containing \(x\). Use the term 'open neighbourhood' to be clearer.
+
+    It is perfectly okay to define a topology of closed sets, which must be closed under finite unions and arbitrary intersections. Then define open sets to be complements of closed sets.
+
+*** Information Content in the Topology 
+
+Going back to the 'equivalence-class' analogy, a topology looks at sets 'modulo closeness'- looking at a set through its topology is equivalent to squinting your eyes so all you can see are blobs (neighbourhoods) which unify things that are close enough. The information content in the topology, then, is how much individuality is actually retained: the stark contrast is most visible when looking at the /indiscrete topology/ \(\{X,\emptyset\}\) which cannot distinguish between anything, and the /discrete topology/ \(2^X\) which can distinguish between everything. 
+
+Naively, the cardinality of the topology indicates how well it can separate individual entities. We can in fact do better- the set of all topologies on a space can be /partially ordered/ by inclusion, and this order gives a good measure of the 'information-content' in the topology. If \(\tau_1 \subset \tau_2\), we say that \(\tau_1\) is /coarser/ and \(\tau_2\) is /finer/- \(\tau_2\) can distinguish between any points that \(\tau_1\) can tell apart. 
+
+**** Data compression (i)
+
+Instead of looking at the size of the topology itself, we can look at the size of subsets that encode the same information as the topology (and from which the entire topology can be recovered). This does two things- firstly it makes it easy to 'pass the topology around' since we only need to reason about the encoded data, and secondly the size of the encoded data is a measure of the size of the topology. One such encoding is the /base./
+
+DEFINITION For a topological space \((X,\tau_X)\), a /basis/ \(\mathcal{B}\subset \tau_X\) is a collection of open sets such that the topology can be recovered by taking arbitrary unions of its elements.
+
+    EXAMPLE A metric space is automatically a topological space by declaring open sets in the metric to be open. The set of all open balls then forms a basis of the topology. Conversely, a topological space \(X\) is /metrizable/ if there is some metric \({d:X\times X\rightarrow \mathbb{R}}\) such that the open balls form a basis of the topology.
+
+    Think of a base more as a /spanning set/- there can be multiple bases, and more trivially, a topology is a base for itself.
+
+DEFINITION A topological space is /second countable/ (or /completely separable/) if it has a countable base.
+
+    This is a limitation on the fineness of the topology- if the entire topology can be compressed into a countable set, it cannot contain too much information.
+
+**** Points that are inseparable from their neighbours
+
+DEFINITION If \(X\) is a topological space and \({A\subset X}\), we say \({x\in X}\) is an /accumulation point of \(A\)/ if every neighbourhood of \(x\) contains some point in \(A\setminus \{x\}\); i.e. \(x\) cannot be separated from \(A\) by open sets. 
+
+    Accordingly, \(x\) is /separated/ from \(A\) if there is some neighbourhood of \(x\) that is disjoint from \(A\setminus\{x\}\). These are analogous to limit points in a metric space: in particular, the limit of a sequence is also an accumulation point of the sequence (looked at as an unordered set).
+
+    The set of all accumulation points of \(A\) is called the /derived set/ \(A'\). 
+
+    LEMMA \(\bar{A}=A\cup A'\) is the smallest closed set containing \(A\). Then, a set is closed iff it contains its derived set.
+
+        SKETCH \(A\cup A'\) is the set of all points \(x\) such that no neighbourhood of \(x\) is disjoint from \(A\). Then any point \(y\in U=X\setminus \bar{A}\) has a neighbourhood \(U_y\) that is disjoint from \(\bar{A}\), and \(U=\bigcup_{y\in U}U_y\) so is open, i.e. \(\bar{A}\) is indeed closed. 
+        Any open set bigger than \(U\) must non-trivially intersect \(A\), since points outside \(U\) have no neighbourhood disjoint from \(A\). Thus there is no smaller closed set containing \(A\).
+
+**** Boundaries
+
+Intuitively, a boundary of a subset separates points from the inside from points on the outside, i.e. using the boundary we can tell the two kinds of points apart. We formalise these ideas. 
+ 
+DEFINITION The smallest closed set containing \(A\) is called the /closure/ of \(A\), written \(\bar{A}\). The largest open set contained in \(A\) is called the
+/interior of \(A,\)/ written \(A^o\).
+
+    \(A\) contains a neighbourhood of every point in its interior, i.e. interior points cannot be separated from \(A\). (We will see soon that this is the same as saying the interior is *dense* in \(A\)). 
+
+\(\partial A = \bar{A}\setminus A^o\) is called the /boundary of \(A\)/. Then closed sets are precisely those that contain their boundary, and open sets are the sets that contain none of their boundary. The sets with no boundary are then /clopen/!
+
+**** Data compression (ii)
+
+As an intuition pump, consider a peculiar person who can only measure distances between rationals, and the only way they can interact with reals are by approximating them to nearby rationals (this is not too peculiar to be honest, for your computer works in the same fashion.) They only have the separation data for a countable set, how many reals can they tell apart? Surprisingly enough, all of them- if we consider successively better approximations, it only takes a finite time for two distinct reals to diverge (the problem is /semi-decidable/). This shows that the separation data for the reals can infact be recovered from the separation data of the rationals, and the latter is a much smaller subset. When are we allowed to do this?  
+  
+DEFINITION For a topological space \(X\), a subset \(A\subset X\) is /dense in \(X\)/ if \(\bar{A}=X\). Equivalently, \(A\) is dense in \(X\) if every non-empty open set of \(X\) contains a point in \(A\).
+
+    Intuitively, things not in the closure of a set are /far from that set/, while things in the closure get arbitrarily close and are inseparable. Saying \(A\) is dense in \(X\) is then the same as saying any point in \(X\) can be approximated to arbitrary precision by points in \(A\). Then the size of the dense subspace reflects the size of the actual space. 
+
+    EXAMPLE The rationals are dense in the reals- given any real, you can find rationals arbitrarily close to it. More generally, any set is dense in its metric completion.
+
+    DEFINITION A space is /separable/ if it has a countable dense subset..
+
+    LEMMA Second countability is strictly stronger than separability (hence is also called complete separability).
+
+        SKETCH Given a countable base, pick a point in each base to get a countable set \(S\). Now \(X\setminus \bar{S}\) is open, but if it is non-empty then it contains a neighbourhood of one of its elements. By definition of a base this neighbourhood contains some base set and hence an element of \(S\), a contradiction. 
+        To see the implication is indeed strictly one sided, consider an uncountable set \(X\) with a point \(x_0\), with the topology such that a set is open iff it contains \(x_0\) (or is empty). Then the set \(\{x_0\}\) is dense, but \(\{x_0,x\}\) is open for uncountably many \(x\) hence the space cannot have a countable base.
+
+*** Contravariance between the set and the topology 
+
+In the previous section, we talked about 'small' and 'large' topologies, characterising the size based on the information content. Intuitively however, one can observe that the size of the underlying set and the relative amount of information content in the topology are inversely related- a countable topology on finite sets could be considered large, but definitely very small on infinite sets. 
+
+**** Complete metric spaces are big
+
+In complete metric spaces things that get too close must have an accumulation point, so intuitively you cannot take points out without ripping apart the space. In other words, the metric topology doesn't contain enough information to separate things, i.e. the underlying set is relatively very large. We formalise this idea:   
+
+DEFINITION A subset \(A \subset X\) is /rare/ or /nowhere dense/ if its closure ((I\(\bar{A}\)) has empty interior. 
+
+Rare subsets can be safely removed from the space without tearing things apart (whatever is left i.e. \(A \setminus X\) is termed /residual/)- their points are not tightly clustured anywhere. Then if a space is the union of countably many rare subsets, one only needs a countable number of operations to take it apart hence the space is 'small'. 
+
+DEFINITION A space is /meagre/ if it is the countable union of nowhere-dense sets.
+  
+Meagre topology separates points well enough (i.e. contain a lot of amount of information relative to the underlying set), hence the underlying set cannot be too large. Then, we show that if a metric space is meagre, it cannot be complete. 
+
+THEOREM *(Baire Category)* A (non-empty) complete metric space is non-meagre. 
+
+    SKETCH We show that in a complete metric space, the countable union of rare sets must have empty interior. Suppose otherwise, i.e. in a complete metric space \(X\), some open unit ball \(D_{r_1}(x_1)\) is contained in the countable union \(V_1 \cup V_2 \cup ...\) of rare sets. 
+    Observe that \(\bar{V_i}\) is a closed set with empty interior, so \(\bar{V_i}^c\) is open and dense. Then for any open set \(U\), \(\bar{V_i}^c \cap U\) (and hence \(V_i^c \cap U \))  properly contains some open ball.  
+    Then \(V_1^c \cap D_{r_2}(x_1)\) contains some open ball \(D_{r_2}(x_2)\) for \(r_2< \frac{1}{2}\). Repeat. 
+    \(V_2^c \cap D_{r_2}(x_2)\) contains some open ball \(D_{r_3}(x_3)\) for \(r_3 < \frac{1}{3}\).
+    \(V_3^c \cap D_{r_3}(x_3)\) contains some open ball \(D_{r_4}(x_4)\) for \(r_4 < \frac{1}{4}\).  \(\dots\)
+    Then the centres of nested open balls form a Cauchy sequence that converges to some \(x\) which must be contained in each \(D_{r_i}(x_i)\), and hence in each \(V_i ^c\). But this means it is in none of the \(V_i\)s, contradicting our assumption that \(D_{r_1}(x_1) \subset \bigcup_i V_i\). 
+
+    The above proof immediately allows us to restate the Baire Category theorem: In a complete metric space, the countable intersection of dense open sets is dense. In general, if a space \(X\) has the property that countable intersection of dense open subsets is dense, we say \(X\) is a /Baire space/. The Baire category theorem then precisely says that complete metric spaces are Baire.
+
+The Baire Category theorem has some really interesting consequences. 
+
+    LEMMA A complete metric space with no isolated points must be uncountable.
+
+    LEMMA \(\mathbb{Q}\) is incomplete, hence there exists an irrational number.
+
+    LEMMA In a complete metric space, meagre sets have empty interior. (But meagre sets need not be nowhere dense themselves!)
+ 
+**** Morphisms of topological spaces must be contravariant
+
+Morphisms are functions that preserve the central structure in the category- in the context of a topology the structure being closeness. For topological spaces, the morphism would have to relate both- the underlying sets as well as the open-set topologies, i.e. \(f: A\rightarrow B\) would have to induce a meaningful relation between \(\tau_A \) and \(\tau_B\).
+
+Intuitively, information can only be lost and never created. In this context, creating information would mean generating more open sets out of nowhere, and so for the morphism \(A \rightarrow B\) to be 'legal', every open set in \(B\) must come from an open set in \(A\)- this induces a map \(\tau_B\rightarrow \tau_A\). Since being closed is also information, closed sets of \(B\) must also come from closed sets of \(A\), hence a morphism between topological spaces must map 
+\begin{align*} & \{\text{open}\} \rightarrow \{\text{open,closed}\} \\ 
+&\{\text{closed}\} \rightarrow \{\text{open,closed}\}\end{align*} \end{align*}
+
+    Restricted to the subcategory of metric spaces, such maps are precisely continuous maps, and since those admitted a metric-free definition it makes sense to promote them to topological morphisms.
+
+    This is made more evident by the fact that all maps from a finer topology to a coarser topology must be continuous- the information in the latter is strictly contained in the former. Intuitively: the coarser the domain, the harder it is to find a continuous map; the coarser the range the easier it is. /Easy to go from more structure to less structure./
+
+Maps that don't lose any information (isomorphisms) are then bijections \(A \leftrightarrow B\) that induce bijections \(\tau_A \leftrightarrow \tau_B\). Homeomorphisms (continuous bijections with continuous inverses) satisfy this, further reaffirming our guess that continuous functions were the right choice of morphism.
+
+Such contravariant definitions often arise when the structure is encoded as a property of /sets/ rather than /points/. An interesting parallel to draw is the defining property of functions- that a singleton sets cannot be mapped to bigger sets- is somehow saying that "preimages of /big/ sets must be /big/."
+
+** Maps between Topologies
+
+The previous discussion sets us up for defining a category \(\text{Top}\) whose objects are topological spaces and morphisms are continuous maps. For the sake of completeness, we will restate the definitions of continuous functions and homeomorphisms: 
+
+DEFINITION A function \(f: (X,\tau_X)\rightarrow (Y,\tau_Y)\) is /continuous/ if \(U\in \tau_Y \Rightarrow f^{-1}[U]\in \tau_X\).
+
+    Slogan: Pre-images of open sets are open. A continuous map \(f:X \rightarrow Y\) induces a natural injection \({\tau_X \leftarrow \tau_Y}\). 
+
+    Continuous maps don't /tear the space/, i.e. keep close things close- this was the entire point of preserving structure. While it is possible to turn interior points into boundary points without any ripping (eg. by bending or gluing), it is not possible to create a boundary where there was none to start with. Hence we require open sets to roll back to open sets.
+
+DEFINITION A /homeomorphism/ is a continuous bijection with a continuous inverse.
+  
+    Need to specify that the inverse must be continuous because it is possible to have continuous bijections with discontinuous inverses. Consider the embedding of \((0,1]\) onto the unit circle \(S^1\)- the inverse function must rip apart the points around \(0\) and \(1\). 
+
+    Since continuous functions are functions without ripping and the inverse of ripping is gluing, homeomorphisms are continuous deformations /without any ripping or gluing/- far points stay far and close points stay close. Coffee cups and doughnuts!
+   
+*** New Topologies from Old
+
+TODO Add universal properties.
+
+Since our object is a set with structure, to get new topologies from old we can look at ways to combine the underlying sets- through cartesian products, taking subsets, and quotienting modulo equivalence relations. Then we choose our topologies on these new sets in order to satisfy desirable properties, which are often given by the so called /Universal properties./ 
+
+NOTE the term 'maps' corresponds to continuous functions only, in this context.  
+
+DEFINITION For a family of topological spaces \(\{X_i\}_{i\in I}\), the box topology on \(\prod_i X_i\) is the topology with base \(\{\prod_i U_i | \; U_i \overset{\text{open}}{\subset} X_i\}\). 
+
+    This is the naive way to put a topology on the cartesian product, but as we will soon see, it is not the best way. 
+
+DEFINITION For a family of topological spaces \(\{X_i\}_{i\in I}\), the product topology on \(\prod_i X_i\) is the coarsest topology such that the canonical projections \(\pi_i : \prod_i X_i \rightarrow X_i\) are continuous. We can verify that such a topology has base \(\{\prod_i U_i | \; U_i \overset{\text{open}}{\subset} X_i \text{ and only finitely many }U_i \neq X_i\}\).  
+
+    A function to the product topology is continuous if and only if all its components are. The /Universal property of products/ is obeyed, i.e. for any collection of maps \(f_i : Z \rightarrow X_i\) there is exactly one map \(f: Z \rightarrow \prod_i X_i\) such that \(f_i = \pi_i \circ f\).
+
+    Naturally, for finite products the product topology is the same as the box topology. For infinite products, however, the box topology fails to satisfy the universal property: consider for instance the space \(\mathbb{R}^\omega\) of real sequences, equipped with the box topology. Then the map \(\mathbb{R}\rightarrow \mathbb{R}^\omega\) given by \(x \mapsto (x,x,x,...)\) is continuous in each component. However, for the open set \(U= (-1,1) \times (-\frac{1}{2}, \frac{1}{2})\times (-\frac{1}{3}, \frac{1}{3}) \times ...\) it can be seen that \(f^{-1}(U) = \{0\}\) is not open.    
+
+DEFINITION For a family of topological spaces \(\{X_i\}_i\), the disjoint union or coproduct is the topological space \(\coprod_i X_i\) whose underlying set is \(\bigcup_i X_i\), and whose open sets are the individual open sets of the \(X_i\).
+
+    The coproduct is defined to be the object with maps \(\sigma_i : X_i \rightarrow \coprod X_i\) and the universal property that any collection of maps \(f_i : X_i \rightarrow Z\) determines exactly one map \(f: \coprod_i X_i \rightarrow Z\) such that \(f_i = f \circ \sigma_i \). It is the category theoretic dual of the product, the 'least specific object' that every member in the family can be mapped to.
+
+    The disjoint union does precisely what its name suggests- it takes unrelated topological spaces and just considers them as one. Each of its components is a clopen set that is a topological space in its own right, and we say the disjoint union of two or more spaces is /disconnected./ This notion can be formalised: 
+
+    DEFINITION A topological space is /disconnected/ if it can be written as the disjoint union of two non-empty clopen sets. It is said to be /connected/ otherwise.
+     
+        We can reformulate this in terms of (continuous) maps: a topological space is disconnected if it supports non-constant maps to discrete spaces.
+
+DEFINITION For a topological space \(X\), the subspace topology on \(Y\subset X\) is the coarsest topology on \(Y\) such that the canonical inclusion \(Y \xhookrightarrow{i} X\) is continuous. Then, the open sets of \(Y\) are precisely of the form \(i^{-1}(U) = U \cap Y \), where \(U \overset{\text{open}}{\subset} X\).
+
+    In this case, the /Universal property of subspaces/ is obeyed, i.e. any function \(f: Z\rightarrow Y\) is continuous if and only if \(i \circ f: Z \rightarrow X\) is continuous.
+
+DEFINITION For a topological space \(X\) with an equivalence relation \(\sim \subset X^2\), the quotient topology on \(X/\sim\) is the finest topology on the set of equivalence classes \(X/\sim\) such that the canonical projection \(X \xrightarrow{\pi} X/\sim\) is continuous. Then, the open sets of \(X/\sim\) are precisely of the form \(\pi(U)\), where \(U \overset{\text{open}}{\subset} X\).  
+   
+   A surjection of sets \(X \rightarrow Y\) induces an equivalence relation on \(X\) by relating any points with the same image. Then \(Y\) is in bijection with the set of equivalence classes on \(X\), and one can imagine the process as 'gluing' sets of points on \(X\) as they get mapped to the same place. The quotient topology is chosen so that this process of gluing becomes continuous.
+
+   Again, the /Universal property of quotients/ is obeyed, i.e. any function \(f: Y \rightarrow Z\) is continuous if and only if \(f \circ \pi: X\rightarrow Z\) is continuous. 
+
+The duality between subspaces and quotient spaces should be very apparent at this point- the universal properties are obtained just by reversing the arrows! This reflects the fact that the two represent the dual topological operations of cutting and gluing, where looking at a subspace topology is effectively cutting it off from the rest of the space.  
+
+
+** Metrization and Separation
+
+As we have seen, topologies that arise from an underlying metric are especially nice since they let us use tools like sequences and convergence. Call a topology /metrizable/ if it is possible to construct a metric which gives exactly the same open sets as the topology. What characterises such topologies? The most important factor is separation information- how well can the topology tell two distinct entities apart. In the worst-case scenario you have the indiscrete topology in which there are only two open sets- the empty set and the entire space. This clearly isn't metrisable for underlying sets of size \(\geq 2\). On the other extreme is the discrete topology, in which every point is at a unit distance from every other point. Everything in between can be classified based on /Tychonoff's separation axioms/, which classify the strength of separation in increasing order. 
+
+If two points share exactly the same neighbourhoods, the topology can in no way tell them apart. A space is \(T_0\) or /Kolmogorov/ if any two distinct points are topologically distinguishable, i.e. there is some neighbourhood of one that does not contain the other. The space is \(T_1\) or /Frechet/ if any two distinct points are separated, i.e. each has a neighbourhood that does not contain the other.
+
+    The topology \(\{U\subset \mathbb{Z}| \; U = \emptyset \text{ or } 0\in U\}\) on \(\mathbb{Z}\) is Kolmogorov, but \(T_1\) (\(1\) has no neighbourhood that does not contain \(0\)). The co-finite topology, on the other hand, is \(T_1\) but not any stronger.  
+
+A space is \(T_2\) or /Hausdorff/ if any two distinct points have disjoint open neighbourhoods, i.e. if \(x \neq y\) then there are open sets \(U_x,U_y\) such that \(x \in U_x, \; y \in U_y\) and \(U_x \cap U_y = \emptyset.\) 
+
+    We say a sequence \(x_1,x_2,...\) converges to \(x\) if for every neighbourhood \(U\) of \(x\), the sequence eventually lies in \(U\). Being Hausdorff is sufficient (but not necessary) for a sequences in the space to have unique limits, but the actual condition is slightly weaker and lies between \(T_1\) and \(T_2\).
+
+    LEMMA Continuous bijections from Compact spaces to Hausdorff spaces are homeomorphisms. 
+
+        SKETCH Suppose we have \(C\) compact, \(H\) Hausdorff and \(f:C\rightarrow H\) a continuous bijection. We simply need to show \(f^{-1}\) is continuous, i.e. \(f\) maps closed sets to closed sets. Suppose \(V\) is a non-empty closed set of \(C\), then \(V\) is compact. Suppose \(y \in H \setminus f(V)\). Using the Hausdorff property, every \(x_i\in f(V)\) can be separated from \(y\) by disjoint open sets \(U_i, V_i\). Then \(\{f^{-1}(U_i)\}\) is an open cover of \(V\), giving a finite subcover \(U_1,U_2,...,U_n\) of V. Then \(H \setminus f(V)\) contains the open neighbourhood \(V_1 \cap V_2 \cap ... \cap V_n\) of \(y\), hence \(f(V)\) is closed.
+
+    Compactness and Hausdorffness in general have this nice interplay, where Hausdorffness allows you to generate open covers and compactness filters it to a finite subcover.
+
+A space is \(T_3\) or /regular Hausdorff/ if every point and a disjoint closed set can be separated by neighbourhoods, i.e. if \(x \notin V \overset{\text{closed}}{\subset} X\) then there are disjoint open sets \(U_1, U_2\) such that \(x\in U_1, \, V \subset U_2\). A space is /normal/ if two disjoint closed sets can be separated by neighbourhoods.
+
+    Normality can be looked at in various ways, based on how you look at open and closed sets. The definition says a space is normal if any two closed sets can be housed off from each other using open sets. Stated differently, every chain \(\text{closed}\subset\text{open}\) in a normal space can be expanded to a longer chain \(\text{closed}\subset\text{open'}\subset \text{closed'} \subset \text{open}\). Repeating this process countably many times allows you to create a 'gradient', and this has cool consequences. 
+
+    DEFINITION A space \(X\) is /normal/ if whenever \(V \overset{\text{closed}}{\subset} X\), \(U \overset{\text{open}}{\subset}X\) with \(V \subset U\), there exist \(V' \overset{\text{closed}}{\subset} X\), \(U' \overset{\text{open}}{\subset}X\) with \(V \subset U' \subset V' \subset U\). 
+
+    LEMMA *(Urysohn's)* Disjoint closed sets in a normal space are /separated by functions/, i.e. if \(V,V'\) are disjoint closed subsets of a normal space \(X\) then there is a continuous function \(f:X\rightarrow [0,1]\) such that \(f(V)=\{0\}, f(V')=\{1\}\).
+
+        SKETCH Write \(U_0 = \emptyset\), \(U_1= X \setminus V'\), \(V_0 = V\), \(V_1 = X\). We define families \(\{V_i\}\) of closed sets and \(\{U_i\}\) of open sets such that \(i<j \Rightarrow U_i \subset V_i \subset U_j \subset V_j\). To achieve this, simply take the chain \(U_0 \subset V_0 \subset U_1 \subset V_1 \) and insert new sets using the normality condition, using mediants for new subscripts. Hence we see something like 
+
+        \begin{align*}
+        U_0 \subset V_0 &\subset U_1 \subset V_1 \\ 
+        U_0 \subset V_0 \subset U_{1/2} &\subset V_{1/2} \subset U_1 \subset V_1 \\ 
+        U_0 \subset V_0 \subset U_{1/3} \subset V_{1/3} \subset U_{1/2} &\subset V_{1/2} \subset U_{2/3} \subset V_{2/3} \subset U_1 \subset V_1 \\ 
+        &\dots
+        \end{align*}
+
+        Notice that we have a \(U_i,V_i\) for every \(i \in \mathbb{Q}\cap [0,1]\). Define \(f:X\rightarrow [0,1]\) by \(f(x)=\sup \{i|\; x \notin U_i\}=\inf \{i|\; x \in V_i\}\). Now \(f(x)< a \Rightarrow x\in \bigcup_{i\leq a} U_i\) and \(f(x)> a \Rightarrow x \in \bigcup_{i\geq a} X\setminus V_i\) so \(f\) is continuous, and satisfies the required conditions.
+
+            Hard to wrap your head around continuity of \(f\), so I will elaborate that a bit: if \(f(x)<a\), then \(\sup\{i| \; x \notin U_i\}<a\) i.e. \(x\) is in some \(U_{i\,(\leq a)}\) (contrapositive is easier to think about). Similarly if \(f(x)>a\) then \(\inf\{i|\; x \in V_i\}>a\), i.e. \(x\) is not in some \(V_{i \; (\geq a)}\). The way to think about this is \(U_i \sim [0,i), \; V_i \sim [0,i]\).
+
+        Urysohn' lemma says that disjoint closed sets in a normal space are 'far enough' that you can force a function to assume certain values on them while still keeping it continuous elsewhere. 
+
+        If you have a continuous function that only takes two values on a closed subset then you can use normality and Urysohn's lemma to continuously extend it to the whole space while preserving bounds (it never leaves \((0,1)\)). In fact, you can drop the assumption that the function is binary valued.
+            
+    THEOREM *(Tietze-Urysohn Extension)* Continuous functions on closed subspaces of normal spaces can be extended while preserving boundedness, ie. if \(X\) is a normal space and \(V\overset{\text{closed}}{\subset}X\), \(f:V \xrightarrow{\text{cts}} \mathbb{R}\) then we can find a \(g:X \xrightarrow{\text{cts}} \mathbb{R}\) such that \(g|_V=f\) and \(||g||_\infty = ||f||_\infty\).
+
+        SKETCH First only consider functions \(f:V\rightarrow [0,1]\). The sets \(f^{-1}[0,\frac{1}{3}]\) and \(f^{-1}[\frac{2}{3},1]\) are closed, so we can construct a function \(g_0: X \rightarrow [0,\frac{1}{3}]\) such that 
+\begin{align*} 
+g_0(x)=\begin{cases} 0, & x\in f^{-1}[0,\frac{1}{3}] \\ \frac{1}{3}, &x \in f^{-1}[\frac{2}{3},1] \\ \text{cts elsewhere}\end{cases}.
+\end{align*} 
+        Let the error be \(f_1= f - g_0\), then observe that \(0\leq f_1\leq\frac{2}{3}\). Since \(\frac{3}{2}f_1\) is another continuous function \(V \rightarrow [0,1]\), we can approximate it with \(\frac{3}{2}g_1 : X \rightarrow [0,\frac{1}{3}]\), and call the error \(f_2 = f_1-g_1:V\rightarrow [0,\frac{2}{3}^2]\). Repeating this inductively, we have a family of functions \(g_n: X \rightarrow [0, \frac{2^n}{3^{n+1}}]\) such that \(f-\sum_1^n g_i = f_{n+1}:V\rightarrow [0, \frac{2}{3}^{n+1}]\). Then \(\sum_1^\infty g_i \) converges and is the required continuous extension of \(f\).
+
+        If \(f\) ranges to all reals, we can extend \(\arctan\circ f\) instead, and compose the result with \(\tan\). The lemma even works for complex-valued \(f\) in a similar way. 
+
+        Tietze-Urysohn's theorem is equivalent to Urysohn's lemma, and we just proved the non-trivial implication.
