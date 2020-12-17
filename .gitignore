@@ -1,2 +1,9 @@
+.latexmkrc
 ltximg/
 .DS_Store 
+*.fls
+*.aux
+*.log
+*.gz
+*.xdv
+*.fdb_latexmk

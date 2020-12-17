@@ -648,7 +648,6 @@ DEFINITION For a topological space \(X\) with an equivalence relation \(\sim \su
 
 The duality between subspaces and quotient spaces should be very apparent at this point- the universal properties are obtained just by reversing the arrows! This reflects the fact that the two represent the dual topological operations of cutting and gluing, where looking at a subspace topology is effectively cutting it off from the rest of the space.  
 
-
 ** Metrization and Separation
 
 As we have seen, topologies that arise from an underlying metric are especially nice since they let us use tools like sequences and convergence. Call a topology /metrizable/ if it is possible to construct a metric which gives exactly the same open sets as the topology. What characterises such topologies? The most important factor is separation information- how well can the topology tell two distinct entities apart. In the worst-case scenario you have the indiscrete topology in which there are only two open sets- the empty set and the entire space. This clearly isn't metrisable for underlying sets of size \(\geq 2\). On the other extreme is the discrete topology, in which every point is at a unit distance from every other point. Everything in between can be classified based on /Tychonoff's separation axioms/, which classify the strength of separation in increasing order. 
